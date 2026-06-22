@@ -1,0 +1,96 @@
+# =======================================================
+#               O LABIRINTO DE LLGON - JOGO EM LLG
+# =======================================================
+
+cls
+say "================================================="
+say "          BEM-VINDO AO LABIRINTO DE LLGON        "
+say "================================================="
+say "1. Iniciar Nova Jornada"
+say "2. Carregar Último Save"
+say "================================================="
+say "Escolha uma opção:"
+rcb menu
+
+# Tenta carregar o save se a opção for 2
+if (menu) == 2 then llgon_load hp = "save.llgon".vida
+if (menu) == 2 then llgon_load moedas = "save.llgon".gold
+if (menu) == 2 then llgon_load fase = "save.llgon".progresso
+
+# Se não encontrou save ou escolheu 1, define status iniciais
+if (menu) == 1 then let hp = 100
+if (menu) == 1 then let moedas = 0
+if (menu) == 1 then let fase = 1
+
+cls
+say "Carregando o mundo da LLG..."
+wait 1.5
+
+# =======================================================
+# FASE 1: A Entrada do Labirinto
+# =======================================================
+cls
+if (fase) == 1 then say "--- FASE 1: A Entrada Obscura ---"
+if (fase) == 1 then say "Você está diante de duas portas de ferro antigas."
+if (fase) == 1 then say "1. Ir pela porta da ESQUERDA (Sussurros estranhos)"
+if (fase) == 1 then say "2. Ir pela porta da DIREITA (Silêncio absoluto)"
+if (fase) == 1 then rcb escolha1
+
+# Consequência da Porta Esquerda (Ganha moedas mas perde vida)
+if (escolha1) == 1 then let moedas = (moedas) + 30
+if (escolha1) == 1 then let hp = (hp) - 15
+if (escolha1) == 1 then say "Você encontrou um baú com 30 moedas de ouro, mas fumaça venenosa te atingiu!"
+
+# Consequência da Porta Direita (Caminho seguro)
+if (escolha1) == 2 then say "A sala estava vazia, mas você encontrou uma passagem secreta segura."
+
+# Atualiza para a Fase 2 se sobreviveu
+if (hp) > 0 then let fase = 2
+wait 3
+
+# Check de Game Over
+if (hp) <= 0 then say "Seu HP chegou a 0! Fim de jogo para você."
+if (hp) <= 0 then exit
+
+# =======================================================
+# FASE 2: O Salão do Conhecimento
+# =======================================================
+cls
+say "--- FASE 2: O Salão do Conhecimento ---"
+say "Status Atual: HP: (hp) | Ouro: (moedas)"
+say "-------------------------------------------------"
+say "Uma estátua mágica bloqueia o caminho e faz uma pergunta:"
+say "Quanto é 5 vezes 5 mais 10?"
+rcb enigma
+
+# Verificação do enigma matemático usando a lógica do interpretador
+if (enigma) == 35 then let moedas = (moedas) + 50
+if (enigma) == 35 then say "A estátua sorri e te dá 50 moedas de ouro!"
+if (enigma) != 35 then let hp = (hp) - 30
+if (enigma) != 35 then say "Errado! Um raio atinge você. Você perdeu 30 de HP."
+
+wait 3
+
+# Check de Game Over 2
+if (hp) <= 0 then say "Você não sobreviveu aos perigos do Salão. Game Over."
+if (hp) <= 0 then exit
+
+# =======================================================
+# SALVAMENTO AUTOMÁTICO (Fim da Demo)
+# =======================================================
+cls
+say "================================================="
+say "       FIM DA DEMO - SEU PROGRESSO FOI SALVO!     "
+say "================================================="
+say "Status Finais de sua Jornada:"
+say "Vida Restante: (hp)"
+say "Ouro Acumulado: (moedas)"
+say "================================================="
+say "Salvando os dados no arquivo save.llgon..."
+
+# Salvando a estrutura no nosso formato customizado LLGON
+llgon_save "C:\\Users\\HP\\Desktop\\Projetos\\llg\\save.llgon" = "vida:(hp), gold:(moedas), progresso:(fase)"
+
+wait 2
+say "Pronto! Da próxima vez, basta digitar '2' no menu principal."
+exit
